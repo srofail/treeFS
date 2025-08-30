@@ -4,7 +4,7 @@ class Leg:
 
     def __init__(self, json):
         self.mode = json["transportation"]["product"]["class"]
-        if self.mode == 99 or self.mode == 100 or self.mode == 107:
+        if self.mode in [99,100,107]:
             self.id = 0
             self.live_data = None
             self.duration = 0
@@ -17,8 +17,7 @@ class Leg:
             self.occupancy_status = ""
             self.name = ""
             return
-
-
+        
         self.id = json["transportation"]["properties"]["RealtimeTripId"]
         self.live_data = self.get_live_data()
         self.duration = int(json["duration"])

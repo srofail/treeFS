@@ -20,7 +20,7 @@ class Emissions:
         self.mode = modeMap[leg.mode] # mode of transport
         self.model = leg.model # to check for zero emissions
         self.stops = leg.stops
-        self.people = self.get_people(leg)
+        self.people = Emissions.get_people(leg)
         self.zero = self.isZeroEmissions()
 
     def isZeroEmissions(self):
@@ -35,9 +35,9 @@ class Emissions:
         # Sydney Metro uses zero-emission electricity for 100 per cent of Metro North West Line
         # Sydney Metro | Sustainability Report 2023 pg. 16
 
-        if self.Mode in ["Walk", "Cycle", "Metro", "Train", "Light Rail"]:
+        if self.mode in ["Walk", "Cycle", "Metro", "Train", "Light Rail"]:
             return True
-        if self.Mode == "Bus":
+        if self.mode == "Bus":
             for make in zero_emissions_list:
                 if self.model.startswith(make):
                     return True
