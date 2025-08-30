@@ -10,6 +10,14 @@ class Backend:
     
     def valid_journey(self):
         return True
+
+    def get_short_formats(ls: list[Journey]):
+        big_list = []
+
+        for option in ls:
+            big_list.append(option.small_present_format())
+
+        return big_list
     
     def get_journeys(self, origin_lat, origin_long, dest_lat, dest_long):
         API_ENDPOINT = "https://api.transport.nsw.gov.au/v1/tp/"
@@ -47,4 +55,4 @@ class Backend:
         for json in response.json()["journeys"]:
             journeys.append(Journey(json))
 
-        return
+        return journeys
