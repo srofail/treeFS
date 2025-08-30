@@ -4,6 +4,13 @@ app = Flask(__name__, template_folder='../Frontend', static_folder='../static')
 
 @app.route("/")
 def start_page():
+    if request.method == "POST":
+        origin_latitude = request.form['origin_latitude']
+        origin_longitude = request.form['origin_longitude']
+        destination_latitude = request.form['destination_latitude']
+        destination_longitude = request.form['destination_longitude']
+        
+
     return render_template("start_page.html")
 
 if __name__ == "__main__":
