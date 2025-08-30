@@ -29,16 +29,11 @@ class Leg:
         fobj = open("API_KEY", "r")
         api_key = fobj.readline()
         buses_url = 'https://api.transport.nsw.gov.au/v1/gtfs/vehiclepos/buses'
-        
+
         headers = {
             "Authorization": api_key
         }
-
-        headers = {
-            'accept': 'application/x-google-protobuf',
-            'Authorization': 'apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJFLUVFaEtfSkxGckdtcDdDUmlCcE03LWY3bldDakZxSVV3YXdEM1FCbS1ZIiwiaWF0IjoxNzU2NTI3OTQ4fQ.JSlweOlbpsW9fmVEZ3iqIMMlUFo76S_iGDrRVnX7HrY',
-        }
-
+        
         params = {
             'debug': 'true',
         }
