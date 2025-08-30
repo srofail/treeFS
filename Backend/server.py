@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 
-app = Flask(__name__, template_folder='../HTML', static_folder='../static')
+app = Flask(__name__, template_folder='../Frontend', static_folder='../static')
 
 @app.route("/")
 def start_page():
