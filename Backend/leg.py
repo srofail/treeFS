@@ -3,14 +3,29 @@ import requests
 class Leg:
 
     def __init__(self, json):
-        self.id = json["transportation"]["properties"]["RealtimeTripID"]
-        self.mode = json["transportation"]["product"]["id"]
+        self.mode = json["transportation"]["product"]["class"]
+        if self.mode == 99 or self.mode == 100 or self.mode == 107:
+            self.id = 0
+            self.live_data = None
+            self.duration = 0
+            self.distance = 1
+            self.model = ""
+            self.departureTime = ""
+            self.stops = 20
+            self.origin = ""
+            self.destination = ""
+            self.occupancy_status = ""
+            self.name = ""
+            return
+
+
+        self.id = json["transportation"]["properties"]["RealtimeTripId"]
         self.live_data = self.get_live_data()
-        self.duration = json["duration"]
+        self.duration = int(json["duration"])
         self.distance = 1 # TODO: figure out
         self.model = self.find_model_name()
         self.departureTime = json["origin"]["departureTimeEstimated"]
-        self.stops = "" # TODO: figure out
+        self.stops = 20 # TODO: figure out
         self.origin = json["origin"]["name"]
         self.destination = json["destination"]["name"]
         self.occupancy_status = self.find_occupancy()
