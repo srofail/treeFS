@@ -43,7 +43,7 @@ class Backend:
 
         journeys = []
 
-        for json in response.json["journeys"]:
+        for json in response.json()["journeys"]:
             journeys.append(Journey(json))
 
         return
