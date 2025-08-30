@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <title>Tree First Search</title>
+    <style>
+        body {
+            background-color: #cfe3dc;
+            background-image: url("../static/back-back.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: Garamond, sans-serif;
+            margin: 0;
+            padding: 20px;
+            margin-left: 50px;
+            text-align: left;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+        }
+
+        .giant-box {
+            width: calc(100vw - 120px);
+            height: calc(100vh - 120px);
+            top: 60px;
+            left: 60px;
+            background-color: #cfe3dc;
+            position: absolute;
+            border-radius: 10px;
+            border: none;
+            z-index: -1;
+        }
+
+        h1 {
+            margin-top: 80px;
+            margin-left: 150px;
+            color: #004080;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .input-wrapper input {
+            width: 500px;
+            height: 30px;
+            margin-top: 20px;
+            padding-left: 2em;
+            font-size: 18px;
+            color: #757575;
+            border-radius: 8px;
+            border: none;
+        }
+        .input-wrapper .search {
+            position: absolute;
+            left: 6px;
+            margin-top: 25px;
+            pointer-events: none;
+        }
+
+        .custom-button {
+            background-color: #065099;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+        .custom-button:hover {
+            background-color: #1966b3;
+        }
+
+        .custom-button-2 {
+            background-color: #065099;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .custom-button-2:hover {
+            background-color: #1966b3;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 70px;
+            font-size: 13px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #757575;
+        }
+
+        .bouncing-image {
+            width: 25px;
+            height: 25px;
+            position: relative;
+            animation: bounce 0.5s infinite alternate;
+        }
+        .bouncing-image:nth-child(1) { animation-delay: 0s; }
+        .bouncing-image:nth-child(2) { animation-delay: 0.1s; }
+        .bouncing-image:nth-child(3) { animation-delay: 0.2s; }
+        @keyframes bounce {
+            0% {top: 0px;}
+            100% {top: -5px;}
+        }
+
+        .rotating-image {
+            width: 37px;
+            height: 25px;
+            transform-origin: center center;
+            position: relative;
+            animation: rotate 1s infinite linear;
+        }
+        @keyframes rotate {
+            from {transform: rotate(0deg);}
+            to {transform: rotate(360deg);}
+        }
+
+        .option .box {
+            width: calc(100vw - 120px - 40px);
+            height: 100px;
+            margin-top: 15px;
+            margin-left: 10px;
+            background-color: #ffffff;
+            position: relative;
+            border-radius: 8px;
+            border: none;
+            display: block;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .option .time-distance {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 20px;
+        }
+
+        .option .emissions {
+            position: absolute;
+            top: 15px;
+            right: 250px;
+            font-size: 20px;
+            color: #1966b3;
+        }
+
+        .option .legs {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-size: 18px;
+            color: #757575;
+        }
+
+        .option .transport-image {
+            position: absolute;
+            bottom: 15px;
+        }
+
+        .option .transport-image {
+            position: absolute;
+            bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="giant-box"></div>
+
+    <img src="../static/logo-1.png" class="logo">
+
+    <h1>Options</h1>
+    <p style="margin-left:150px">Presenting routes from [starting point] to [destination]
+    <img src="../static/gear.png" class="rotating-image">
+    </p>
+    <br>
+
+    <button class="custom-button" style="position: absolute; top: 80px; right: 80px"><a href="">Back</a></button>
+</html>
+
+<!-- <div class="option">
+        <div class="box">
+            <div class="time-distance"> <strong>Time:</strong> A minutes | <strong>Distance:</strong> B km </div>
+        </div>
+    </div>
+    <br> -->
+
+<div id="container"></div>
+
+<script>
+    // const routes = [
+    //     // time, distance, departure time, co2, trees, list of symbols & routes
+    //     [11, 15, "9:58", 300, 5, [["B", "483"], ["T", "T9"], ["W", ""]]],
+    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]]
+    // ]
+    let routes;
+    fetch("/list_of_options")
+        .then(res => res.json())
+        .then(data => {
+            routes = data;
+        })
+        .catch(err => console.error("e", err));
+
+    const container = document.getElementById("container");
+
+    routes["list"].forEach(route => {
+        const optionDiv = document.createElement("div");
+        optionDiv.classList.add("option");
+
+        const boxDiv = document.createElement("div");
+        boxDiv.classList.add("box");
+
+        const timeDistance = document.createElement("div");
+        timeDistance.classList.add("time-distance");
+        timeDistance.innerHTML = `<strong>Time:</strong> ${route[0]} minutes | <strong>Distance:</strong> ${route[1]} km`;
+
+        const emissions = document.createElement("div");
+        emissions.classList.add("emissions");
+        emissions.innerHTML = `<strong>CO<sub>2</sub> emissions:</strong> ${route[3]} g | <strong>Trees:</strong> ${route[4]} tree days`;
+
+        route[5].forEach((leg, i) => {
+            const div = document.createElement("div");
+            div.classList.add("legs");
+            let symbol = leg[0];
+
+            let imagePath = "";
+            if (symbol == "B") {
+                imagePath = "../static/methods/bus.svg.png";
+            } else if (symbol == "Co") {
+                imagePath = "../static/methods/coach.svg.png";
+            } else if (symbol == "Cy") {
+                imagePath = "../static/methods/cycle.png";
+            } else if (symbol == "F") {
+                imagePath = "../static/methods/ferry.svg.png";
+            } else if (symbol == "L") {
+                imagePath = "../static/methods/lightrail.svg.png";
+            } else if (symbol == "M") {
+                imagePath = "../static/methods/metro.svg.png";
+            } else if (symbol == "T") {
+                imagePath = "../static/methods/trains.svg.png";
+            } else if (symbol == "W") {
+                imagePath = "../static/methods/walking.png";
+            }
+
+            const imgElement = document.createElement('img');
+            imgElement.src = imagePath;
+            imgElement.width = 25;
+            if (symbol == "W") {
+                imgElement.width = 17;
+            }
+            imgElement.height = 25;
+            imgElement.classList.add("transport-image");
+
+            imgElement.style.postion = "absolute";
+            imgElement.style.left = `${15 + i * 80}px`;
+            imgElement.style.bottom = '15px';
+
+            div.innerText = `${leg[1]}`;
+            div.style.position = 'absolute';
+            div.style.left = `${45 + i * 80}px`;
+            div.style.bottom = '17px';
+
+            boxDiv.appendChild(imgElement);
+            boxDiv.appendChild(div);
+        });
+
+        let treePath = "../static/little-tree.png";
+        for (let i = 0; i < route[4]; i++) {
+            const imgElement = document.createElement('img');
+            imgElement.src = treePath;
+            imgElement.width = 25;
+            imgElement.height = 25;
+            imgElement.classList.add("tree-image");
+            imgElement.style.postion = "absolute";
+            imgElement.style.right = `${250 + i * 30}px`;
+            imgElement.style.bottom = '15px';
+            boxDiv.appendChild(imgElement);
+        }
+
+        const moreInfoButton = document.createElement("button");
+        moreInfoButton.classList.add("custom-button-2");
+        moreInfoButton.textContent = "More information";
+
+        boxDiv.appendChild(moreInfoButton);
+        boxDiv.appendChild(timeDistance);
+        boxDiv.appendChild(emissions);
+        optionDiv.appendChild(boxDiv);
+        container.appendChild(optionDiv);
+    });
+</script>
+    
+    <footer>&copy; Philip Howard, Alexandre Lambert, Samuel Rofail, Olivia Thompson, Alexia Wood. All rights reserved. 2025.</footer>
+</body>
+</html>

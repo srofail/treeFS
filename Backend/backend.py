@@ -5,6 +5,8 @@ from journey import Journey
 
 class Backend:
 
+    results = []
+
     def __init__(self):
         return
     
@@ -55,4 +57,7 @@ class Backend:
         for json in response.json()["journeys"]:
             journeys.append(Journey(json))
 
-        return journeys
+        num = len(Backend.results)
+        Backend.results.append(journeys)
+
+        return num

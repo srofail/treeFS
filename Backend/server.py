@@ -1,32 +1,36 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from backend import Backend
 
 app = Flask(__name__, template_folder='../Frontend', static_folder='../static')
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def start_page():
     if request.method == "POST":
-        origin_latitude = request.form['origin_latitude']
-        origin_longitude = request.form['origin_longitude']
-        destination_latitude = request.form['destination_latitude']
-        destination_longitude = request.form['destination_longitude']
+        # origin_latitude = request.form['origin_latitude']
+        # origin_longitude = request.form['origin_longitude']
+        # destination_latitude = request.form['destination_latitude']
+        # destination_longitude = request.form['destination_longitude']
 
-        session['journeys'] = backend.get_journeys(origin_latitude, origin_longitude, destination_latitude, destination_longitude)
-        return redirect(url_for('options'))
+        session['journeys'] = backend.get_journeys(-33.889299, 151.193106, -33.889922, 151.089027)
+        return redirect(url_for('options_page'))
 
     return render_template("start_page.html")
+
+@app.route("/list_of_options")
+def list_of_options():
+    presentation = Backend.get_short_formats[Backend.results[session['journeys']]]
+    return jsonify({"list": presentation})
 
 @app.route("/options")
 def options_page():
     if request.method == "POST":
         pass # redirect to the chosen journey
 
-    presentation = Backend.get_short_formats[session['journeys']]
-
-    return render_template("options.html", journey_list=presentation)
+    return render_template("options.html")
 
 if __name__ == "__main__":
 	# Development server entrypoint
     backend = Backend()
+    app.secret_key = "philip"
     app.run(debug=True)
     
