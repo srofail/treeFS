@@ -1,6 +1,5 @@
 import requests
 
-apikey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJFLUVFaEtfSkxGckdtcDdDUmlCcE03LWY3bldDakZxSVV3YXdEM1FCbS1ZIiwiaWF0IjoxNzU2NTI3OTQ4fQ.JSlweOlbpsW9fmVEZ3iqIMMlUFo76S_iGDrRVnX7HrY"
 
 trains_url = 'https://api.transport.nsw.gov.au/v2/gtfs/vehiclepos/sydneytrains'
 buses_url = 'https://api.transport.nsw.gov.au/v1/gtfs/vehiclepos/buses'
