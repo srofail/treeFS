@@ -11,6 +11,9 @@ def start_page():
         # destination_latitude = request.form['destination_latitude']
         # destination_longitude = request.form['destination_longitude']
 
+        session['origin_name'] = "University of Sydney"
+        session['dest_name'] = "Random Place"
+
         session['journeys'] = backend.get_journeys(-33.889299, 151.193106, -33.889922, 151.089027)
         return redirect(url_for('options_page'))
 
@@ -18,8 +21,9 @@ def start_page():
 
 @app.route("/list_of_options")
 def list_of_options():
-    presentation = Backend.get_short_formats[Backend.results[session['journeys']]]
-    return jsonify({"list": presentation})
+    presentation = Backend.get_short_formats(Backend.results[session['journeys']])
+
+    return jsonify({"journey_list": presentation, "start": session["origin_name"], "end": session["dest_name"]})
 
 @app.route("/options")
 def options_page():

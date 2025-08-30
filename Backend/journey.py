@@ -17,8 +17,8 @@ class Journey:
         result.append(self.duration // 60)
         result.append(10)
         result.append(self.departure_time)
-        result.append(self.co2)
-        result.append(self.trees)
+        result.append(int(self.co2 * 1000))
+        result.append(int(self.trees))
         
         routes = []
         for leg in self.legs:

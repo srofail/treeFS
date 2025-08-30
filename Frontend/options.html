@@ -28,7 +28,8 @@
 
         .giant-box {
             width: calc(100vw - 120px);
-            height: calc(100vh - 120px);
+            /* height: calc(100vh - 120px); */
+            min-height: calc(100vh - 120px);
             top: 60px;
             left: 60px;
             background-color: #cfe3dc;
@@ -36,6 +37,7 @@
             border-radius: 10px;
             border: none;
             z-index: -1;
+            margin-bottom: 60px;
         }
 
         h1 {
@@ -94,7 +96,7 @@
             background-color: #1966b3;
         }
 
-        .custom-button-2 {
+        /* .custom-button-2 {
             background-color: #065099;
             color: white;
             padding: 15px 32px;
@@ -111,7 +113,7 @@
         }
         .custom-button-2:hover {
             background-color: #1966b3;
-        }
+        } */
 
         footer {
             position: absolute;
@@ -125,15 +127,16 @@
         .bouncing-image {
             width: 25px;
             height: 25px;
-            position: relative;
-            animation: bounce 0.5s infinite alternate;
+            position: absolute;
+            animation: bounce 1.5s infinite alternate;
         }
-        .bouncing-image:nth-child(1) { animation-delay: 0s; }
+        /* .bouncing-image:nth-child(1) { animation-delay: 0s; }
         .bouncing-image:nth-child(2) { animation-delay: 0.1s; }
-        .bouncing-image:nth-child(3) { animation-delay: 0.2s; }
+        .bouncing-image:nth-child(3) { animation-delay: 0.2s; } */
         @keyframes bounce {
-            0% {top: 0px;}
-            100% {top: -5px;}
+            0% {transform: translateY(0px);}
+            50% {transform: translateY(0px);}
+            100% {transform: translateY(-5px);}
         }
 
         .rotating-image {
@@ -172,7 +175,7 @@
         .option .emissions {
             position: absolute;
             top: 15px;
-            right: 250px;
+            right: 15px;
             font-size: 20px;
             color: #1966b3;
         }
@@ -190,7 +193,7 @@
             bottom: 15px;
         }
 
-        .option .transport-image {
+        .option .tree-image {
             position: absolute;
             bottom: 15px;
         }
@@ -223,7 +226,11 @@
 <script>
     // const routes = [
     //     // time, distance, departure time, co2, trees, list of symbols & routes
-    //     [11, 15, "9:58", 300, 5, [["B", "483"], ["T", "T9"], ["W", ""]]],
+    //     [11, 15, "9:58", 300, 15, [["B", "483"], ["T", "T9"], ["W", ""]]],
+    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
+    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
+    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
+    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
     //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]]
     // ]
     let routes;
@@ -231,95 +238,100 @@
         .then(res => res.json())
         .then(data => {
             routes = data;
+            
+            const container = document.getElementById("container");
+
+            routes.journey_list.forEach(route => {
+                const optionDiv = document.createElement("div");
+                optionDiv.classList.add("option");
+
+                const boxDiv = document.createElement("div");
+                boxDiv.classList.add("box");
+
+                const timeDistance = document.createElement("div");
+                timeDistance.classList.add("time-distance");
+                timeDistance.innerHTML = `<strong>Time:</strong> ${route[0]} minutes | <strong>Distance:</strong> ${route[1]} km`;
+
+                const emissions = document.createElement("div");
+                emissions.classList.add("emissions");
+                emissions.innerHTML = `<strong>CO<sub>2</sub> emissions:</strong> ${route[3]} g | <strong>Trees:</strong> ${route[4]} tree days`;
+
+                route[5].forEach((leg, i) => {
+                    const div = document.createElement("div");
+                    div.classList.add("legs");
+                    let symbol = leg[0];
+
+                    let imagePath = "";
+                    if (symbol == "5") {
+                        imagePath = "../static/methods/bus.svg.png";
+                    } else if (symbol == "7") {
+                        imagePath = "../static/methods/coach.svg.png";
+                    } else if (symbol == "107") {
+                        imagePath = "../static/methods/cycle.png";
+                    } else if (symbol == "9") {
+                        imagePath = "../static/methods/ferry.svg.png";
+                    } else if (symbol == "4") {
+                        imagePath = "../static/methods/lightrail.svg.png";
+                    } else if (symbol == "2") {
+                        imagePath = "../static/methods/metro.svg.png";
+                    } else if (symbol == "1") {
+                        imagePath = "../static/methods/trains.svg.png";
+                    } else if (symbol == "100" || symbol == "99") {
+                        imagePath = "../static/methods/walking.png";
+                    }
+
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imagePath;
+                    imgElement.width = 25;
+                    if (symbol == "100" || symbol == "99") {
+                        imgElement.width = 17;
+                    }
+                    imgElement.height = 25;
+                    imgElement.classList.add("transport-image");
+
+                    imgElement.style.position = "absolute";
+                    imgElement.style.left = `${15 + i * 80}px`;
+                    imgElement.style.bottom = '15px';
+
+                    div.innerText = `${leg[1]}`;
+                    div.style.position = 'absolute';
+                    div.style.left = `${45 + i * 80}px`;
+                    div.style.bottom = '17px';
+
+                    boxDiv.appendChild(imgElement);
+                    boxDiv.appendChild(div);
+                });
+
+                let treePath = "../static/little-tree.png";
+                let maxTrees = route[4];
+                if (maxTrees > 25) {
+                    maxTrees = 25;
+                }
+                for (let i = 0; i < maxTrees; i++) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = treePath;
+                    imgElement.width = 25;
+                    imgElement.height = 25;
+                    imgElement.classList.add("tree-image", "bouncing-image");
+                    imgElement.style.position = "absolute";
+                    imgElement.style.right = `${15 + i * 30}px`;
+                    imgElement.style.bottom = '15px';
+                    imgElement.style.animationDelay = `${i * 0.2}s`;
+                    boxDiv.appendChild(imgElement);
+                }
+
+                // const moreInfoButton = document.createElement("button");
+                // moreInfoButton.classList.add("custom-button-2");
+                // moreInfoButton.textContent = "More information";
+                // boxDiv.appendChild(moreInfoButton);
+
+                boxDiv.appendChild(timeDistance);
+                boxDiv.appendChild(emissions);
+                optionDiv.appendChild(boxDiv);
+                container.appendChild(optionDiv);
+            });
         })
         .catch(err => console.error("e", err));
-
-    const container = document.getElementById("container");
-
-    routes["list"].forEach(route => {
-        const optionDiv = document.createElement("div");
-        optionDiv.classList.add("option");
-
-        const boxDiv = document.createElement("div");
-        boxDiv.classList.add("box");
-
-        const timeDistance = document.createElement("div");
-        timeDistance.classList.add("time-distance");
-        timeDistance.innerHTML = `<strong>Time:</strong> ${route[0]} minutes | <strong>Distance:</strong> ${route[1]} km`;
-
-        const emissions = document.createElement("div");
-        emissions.classList.add("emissions");
-        emissions.innerHTML = `<strong>CO<sub>2</sub> emissions:</strong> ${route[3]} g | <strong>Trees:</strong> ${route[4]} tree days`;
-
-        route[5].forEach((leg, i) => {
-            const div = document.createElement("div");
-            div.classList.add("legs");
-            let symbol = leg[0];
-
-            let imagePath = "";
-            if (symbol == "B") {
-                imagePath = "../static/methods/bus.svg.png";
-            } else if (symbol == "Co") {
-                imagePath = "../static/methods/coach.svg.png";
-            } else if (symbol == "Cy") {
-                imagePath = "../static/methods/cycle.png";
-            } else if (symbol == "F") {
-                imagePath = "../static/methods/ferry.svg.png";
-            } else if (symbol == "L") {
-                imagePath = "../static/methods/lightrail.svg.png";
-            } else if (symbol == "M") {
-                imagePath = "../static/methods/metro.svg.png";
-            } else if (symbol == "T") {
-                imagePath = "../static/methods/trains.svg.png";
-            } else if (symbol == "W") {
-                imagePath = "../static/methods/walking.png";
-            }
-
-            const imgElement = document.createElement('img');
-            imgElement.src = imagePath;
-            imgElement.width = 25;
-            if (symbol == "W") {
-                imgElement.width = 17;
-            }
-            imgElement.height = 25;
-            imgElement.classList.add("transport-image");
-
-            imgElement.style.postion = "absolute";
-            imgElement.style.left = `${15 + i * 80}px`;
-            imgElement.style.bottom = '15px';
-
-            div.innerText = `${leg[1]}`;
-            div.style.position = 'absolute';
-            div.style.left = `${45 + i * 80}px`;
-            div.style.bottom = '17px';
-
-            boxDiv.appendChild(imgElement);
-            boxDiv.appendChild(div);
-        });
-
-        let treePath = "../static/little-tree.png";
-        for (let i = 0; i < route[4]; i++) {
-            const imgElement = document.createElement('img');
-            imgElement.src = treePath;
-            imgElement.width = 25;
-            imgElement.height = 25;
-            imgElement.classList.add("tree-image");
-            imgElement.style.postion = "absolute";
-            imgElement.style.right = `${250 + i * 30}px`;
-            imgElement.style.bottom = '15px';
-            boxDiv.appendChild(imgElement);
-        }
-
-        const moreInfoButton = document.createElement("button");
-        moreInfoButton.classList.add("custom-button-2");
-        moreInfoButton.textContent = "More information";
-
-        boxDiv.appendChild(moreInfoButton);
-        boxDiv.appendChild(timeDistance);
-        boxDiv.appendChild(emissions);
-        optionDiv.appendChild(boxDiv);
-        container.appendChild(optionDiv);
-    });
 </script>
     
     <footer>&copy; Philip Howard, Alexandre Lambert, Samuel Rofail, Olivia Thompson, Alexia Wood. All rights reserved. 2025.</footer>
