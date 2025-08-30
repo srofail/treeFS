@@ -35,6 +35,7 @@ class Backend:
 
         fobj = open("API_KEY", "r")
         api_key = fobj.readline()
+        fobj.close()
         headers = {
             "Authorization": api_key
         }
