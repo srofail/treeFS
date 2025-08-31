@@ -17,7 +17,7 @@ class Leg:
             self.origin = ""
             self.destination = ""
             self.occupancy_status = ""
-            self.name = ""
+            self.name = self.duration // 60
             return
         
         try:

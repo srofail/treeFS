@@ -163,6 +163,11 @@
             display: block;
             padding: 10px;
             box-sizing: border-box;
+            cursor: pointer;
+        }
+        .box:hover {
+            background-color: #b3b3b3;
+            border: 2px solid rgb(74, 74, 74);
         }
 
         .option .time-distance {
@@ -206,9 +211,10 @@
     <img src="../static/logo-1.png" class="logo">
 
     <h1>Options</h1>
-    <p style="margin-left:150px">Presenting routes from [starting point] to [destination]
+    <img src="../static/gear.png" class="rotating-image" style = "position: absolute; left:220px; top: 147px;">
+    <!-- <p style="margin-left:150px">Presenting routes from [starting point] to [destination]
     <img src="../static/gear.png" class="rotating-image">
-    </p>
+    </p> -->
     <br>
 
     <button class="custom-button" style="position: absolute; top: 80px; right: 80px"><a href="">Back</a></button>
@@ -224,15 +230,6 @@
 <div id="container"></div>
 
 <script>
-    // const routes = [
-    //     // time, distance, departure time, co2, trees, list of symbols & routes
-    //     [11, 15, "9:58", 300, 15, [["B", "483"], ["T", "T9"], ["W", ""]]],
-    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
-    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
-    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
-    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]],
-    //     [14, 6.2, "9:58", 300, 5, [["Co", "570"], ["M", "M1"], ["L", "L2"], ["Cy", ""]]]
-    // ]
     let routes;
     fetch("/list_of_options")
         .then(res => res.json())
@@ -241,7 +238,15 @@
             
             const container = document.getElementById("container");
 
-            routes.journey_list.forEach(route => {
+            const topText = document.createElement("div");
+            topText.classList.add("p");
+            topText.innerHTML = `Presenting routes from ${routes.start} to ${routes.end}:`;
+            topText.style.position = "absolute";
+            topText.style.left = '260px';
+            topText.style.top = '150px';
+            container.appendChild(topText);
+
+            routes.journey_list.forEach((route, j) => {
                 const optionDiv = document.createElement("div");
                 optionDiv.classList.add("option");
 
@@ -250,7 +255,7 @@
 
                 const timeDistance = document.createElement("div");
                 timeDistance.classList.add("time-distance");
-                timeDistance.innerHTML = `<strong>Time:</strong> ${route[0]} minutes | <strong>Distance:</strong> ${route[1]} km`;
+                timeDistance.innerHTML = `<strong>Leave:</strong> ${route[2]} | <strong>Time:</strong> ${route[0]} minutes | <strong>Distance:</strong> ${route[1]} km`;
 
                 const emissions = document.createElement("div");
                 emissions.classList.add("emissions");
@@ -290,12 +295,15 @@
                     imgElement.classList.add("transport-image");
 
                     imgElement.style.position = "absolute";
-                    imgElement.style.left = `${15 + i * 80}px`;
+                    imgElement.style.left = `${15 + i * 100}px`;
                     imgElement.style.bottom = '15px';
 
                     div.innerText = `${leg[1]}`;
+                    if (symbol == "100" || symbol == "99") {
+                        div.innerText = `${leg[1]} min`;
+                    }
                     div.style.position = 'absolute';
-                    div.style.left = `${45 + i * 80}px`;
+                    div.style.left = `${45 + i * 100}px`;
                     div.style.bottom = '17px';
 
                     boxDiv.appendChild(imgElement);
@@ -329,6 +337,29 @@
                 boxDiv.appendChild(emissions);
                 optionDiv.appendChild(boxDiv);
                 container.appendChild(optionDiv);
+
+                boxDiv.addEventListener('click', () => {
+                    fetch("options", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: `number=${j}`
+                    })
+                    .then(res => res.text())
+                    .then(data => console.log("Response:", data));
+                    // .then(res => {
+                    //     if (res.redirected) {
+                    //         window.location.href = res.url;
+                    //     } else {
+                    //         return res.text();
+                    //     }
+                    // })
+                    // .then(data => {
+                    //     console.log("r", data);
+                    // })
+                    // .catch(err => console.error("e", err));
+                });
             });
         })
         .catch(err => console.error("e", err));

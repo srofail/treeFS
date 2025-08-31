@@ -2,6 +2,7 @@ import requests
 import time
 from datetime import datetime
 from journey import Journey
+from emissions import Emissions
 
 class Backend:
 
@@ -19,6 +20,19 @@ class Backend:
         for option in ls:
             big_list.append(option.small_present_format())
 
+        return big_list
+
+    def get_long_format(journey: Journey):
+        big_list = []
+        for leg in journey.legs:
+            new = []
+            new.append(leg.mode)
+            new.append(leg.name)
+            new.append(int(Emissions(leg).zero))
+            new.append(leg.origin)
+            new.append(leg.departureTime)
+            new.append(leg.destination)
+            big_list.append(new)
         return big_list
     
     def get_journeys(self, origin_lat, origin_long, dest_lat, dest_long):
