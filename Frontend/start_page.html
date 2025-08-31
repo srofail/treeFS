@@ -54,7 +54,6 @@
         }
         a:hover {
             text-decoration: underline;
-        
         }
 
         .input-wrapper {
@@ -94,6 +93,20 @@
             background-color: #1966b3;
         }
 
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border: 1px solid #b3d7f2;
+            border-radius: 8px;
+            line-height: 1.6;
+            display: none;
+            width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
         footer {
             position: absolute;
             bottom: 70px;
@@ -116,7 +129,6 @@
             0% {top: 0px;}
             100% {top: -5px;}
         }
-
     </style>
 </head>
 <body>
@@ -134,21 +146,97 @@
     </p>
 
     <form method="POST" action="{{url_for('start_page')}}">
-    <div class="input-wrapper">
-        <span class="search">&#128270</span>
-        <input type="text" placeholder="Enter your starting point">
-    </div> 
-    <br>
+        <div class="input-wrapper">
+            <span class="search">&#128270</span>
+            <input type="text" id="start-input" placeholder="Enter your starting point">
+        </div>
+        <br>
 
-    <div class="input-wrapper">
-        <span class="search">&#128270</span>
-        <input type="text" placeholder="Enter your destination">
-    </div>
-    <br>
+        <div class="input-wrapper">
+            <span class="search">&#128270</span>
+            <input type="text" id="dest-input" placeholder="Enter your destination">
+        </div>
+        <br>
 
-    <button class="custom-button" type="submit">Search</button>
-    <br>
+        <button class="custom-button" type="submit">Search</button>
+        <br>
     </form>
 
+    <div id="result"></div>
+
     <footer>&copy; Philip Howard, Alexandre Lambert, Samuel Rofail, Olivia Thompson, Alexia Wood. All rights reserved. 2025.</footer>
+
+    <!-- Google Maps Places API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+
+    <script>
+        function initAutocomplete() {
+            const nswBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(-37.5, 140.9),
+                new google.maps.LatLng(-28.1, 153.6)
+            );
+
+            const options = {
+                bounds: nswBounds,
+                componentRestrictions: { 'country': 'au' },
+                fields: ["formatted_address", "geometry"],
+                strictBounds: false
+            };
+
+            const startInput = document.getElementById("start-input");
+            const destInput = document.getElementById("dest-input");
+
+            const startAutocomplete = new google.maps.places.Autocomplete(startInput, options);
+            const destAutocomplete = new google.maps.places.Autocomplete(destInput, options);
+
+            const resultDiv = document.getElementById("result");
+            let startPlace = null;
+            let destPlace = null;
+
+            function updateResults() {
+                if (startPlace && destPlace) {
+                    originString = startPlace.formatted_address;
+                    originLat = startPlace.geometry.location.lat();
+                    originLon = startPlace.geometry.location.lng();
+                    
+                    destString = destPlace.formatted_address;
+                    destLat = destPlace.geometry.location.lat();
+                    destLon = destPlace.geometry.location.lng();
+
+                    console.log(originLat); // debugging
+
+                    resultDiv.innerHTML = `
+                        <strong>Starting Point:</strong> ${startPlace.formatted_address}<br>
+                        <strong>Latitude:</strong> ${startPlace.geometry.location.lat()}<br>
+                        <strong>Longitude:</strong> ${startPlace.geometry.location.lng()}<br><br>
+                        <strong>Destination:</strong> ${destPlace.formatted_address}<br>
+                        <strong>Latitude:</strong> ${destPlace.geometry.location.lat()}<br>
+                        <strong>Longitude:</strong> ${destPlace.geometry.location.lng()}
+                    `;
+                    resultDiv.style.display = 'block';
+                }
+            }
+
+            startAutocomplete.addListener("place_changed", () => {
+                startPlace = startAutocomplete.getPlace();
+                if (!startPlace.geometry) {
+                    alert("No details available for: " + startPlace.name);
+                    startPlace = null;
+                    return;
+                }
+                updateResults();
+            });
+
+            destAutocomplete.addListener("place_changed", () => {
+                destPlace = destAutocomplete.getPlace();
+                if (!destPlace.geometry) {
+                    alert("No details available for: " + destPlace.name);
+                    destPlace = null;
+                    return;
+                }
+                updateResults();
+            });
+        }
+    </script>
+</body>
 </html>
