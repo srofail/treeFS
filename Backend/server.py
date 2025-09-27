@@ -6,15 +6,18 @@ app = Flask(__name__, template_folder='../Frontend', static_folder='../static')
 @app.route("/", methods=["GET", "POST"])
 def start_page():
     if request.method == "POST":
-        origin_latitude = float(request.form.get('origin_latitude', 'string'))
-        origin_longitude = float(request.form.get('origin_longitude', 'string'))
-        destination_latitude = float(request.form.get('destination_latitude', 'string'))
-        destination_longitude = float(request.form.get('destination_longitude', 'string'))
+        origin_latitude = request.form.get('origin_latitude', 'string')
+        origin_longitude = request.form.get('origin_longitude', 'string')
+        destination_latitude = request.form.get('destination_latitude', 'string')
+        destination_longitude = request.form.get('destination_longitude', 'string')
 
-        session['origin_name'] = "University of Sydney"
-        session['dest_name'] = "Random Place"
+        if '' in [origin_latitude, origin_longitude, destination_latitude, destination_longitude]:
+            return render_template("start_page.html")
 
-        session['journeys'] = backend.get_journeys(origin_latitude, origin_longitude, destination_latitude, destination_longitude)
+        session['origin_name'] = request.form.get('start-input', 'string').split(',')[0]
+        session['dest_name'] = request.form.get('dest-input', 'string').split(',')[0]
+
+        session['journeys'] = backend.get_journeys(float(origin_latitude), float(origin_longitude), float(destination_latitude), float(destination_longitude))
         return redirect(url_for('options_page'))
 
     return render_template("start_page.html")

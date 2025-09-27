@@ -148,7 +148,7 @@
     <form method="POST" action="{{url_for('start_page')}}">
         <div class="input-wrapper">
             <span class="search">&#128270</span>
-            <input type="text" id="start-input" placeholder="Enter your starting point">
+            <input type="text" id="start-input" name="start-input" placeholder="Enter your starting point">
             <input type="hidden" id="origin_latitude" name="origin_latitude">
             <input type="hidden" id="origin_longitude" name="origin_longitude">
         </div>
@@ -156,7 +156,7 @@
 
         <div class="input-wrapper">
             <span class="search">&#128270</span>
-            <input type="text" id="dest-input" placeholder="Enter your destination">
+            <input type="text" id="dest-input" name="dest-input" placeholder="Enter your destination">
             <input type="hidden" id="destination_latitude" name="destination_latitude">
             <input type="hidden" id="destination_longitude" name="destination_longitude">
         </div>
@@ -209,11 +209,9 @@
 
                     console.log(originLat); // debugging
 
-                    document.getElementById("start-input").value = originString;
                     document.getElementById("origin_latitude").value = originLat;
                     document.getElementById("origin_longitude").value = originLon;
 
-                    document.getElementById("dest-input").value = destString;
                     document.getElementById("destination_latitude").value = destLat;
                     document.getElementById("destination_longitude").value = destLon;
 
