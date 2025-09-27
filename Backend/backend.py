@@ -57,6 +57,8 @@ class Backend:
             "TfNSWTR": "true"
         }
 
+        print(params["itdTime"])
+
         fobj = open("API_KEY", "r")
         api_key = fobj.readline()
         fobj.close()
@@ -67,9 +69,12 @@ class Backend:
         response = requests.get(API_ENDPOINT + API_CALL, params=params, headers=headers)
 
         journeys = []
+        
+        if "journeys" in response.json():
+            for json in response.json()["journeys"]:
+                journeys.append(Journey(json))
 
-        for json in response.json()["journeys"]:
-            journeys.append(Journey(json))
+        
 
         num = len(Backend.results)
         Backend.results.append(journeys)
